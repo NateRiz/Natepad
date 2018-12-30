@@ -9,8 +9,9 @@ class File: public QWidget
 {
     Q_OBJECT
 public:
-    explicit File(QWidget* parent);
+    explicit File(QWidget* parent, QString filePath);
     virtual ~File(){}
+    QString getFilePath();
 
 public slots:
     void SelectSelf(QMouseEvent *event);
@@ -20,6 +21,9 @@ signals:
 
 protected:
     void mousePressEvent(QMouseEvent* event);
+
+private:
+    QString mFilePath;
 
 };
 

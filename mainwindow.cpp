@@ -118,6 +118,11 @@ Filetree* MainWindow::getFiletree()
     return mFiletree;
 }
 
+Editor *MainWindow::getEditor()
+{
+    return mEditor;
+}
+
 void MainWindow::CreateClientPrompt()
 {
     QInputDialog::getText(this, "Join", "IP");

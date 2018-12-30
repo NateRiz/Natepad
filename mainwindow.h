@@ -22,6 +22,7 @@ public:
     ~MainWindow();
     void SetTitle(QString);
     Filetree* getFiletree();
+    Editor* getEditor();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

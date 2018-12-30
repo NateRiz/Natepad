@@ -79,7 +79,6 @@ void Editor::SaveAs()
     file << toPlainText().toUtf8().toStdString();
     file.close();
     SetSaved();
-
 }
 
 void Editor::Open()
@@ -93,11 +92,32 @@ void Editor::Open()
     {
         return;
     }
+
     QFile file(mSavePath);
     file.open(QFile::ReadOnly | QFile::Text);
     QTextStream ReadFile(&file);
     setText(ReadFile.readAll());
     SetSaved();
+
+    qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
+
+}
+
+void Editor::Open(QString path)
+{
+    QFile file(path);
+
+    if(!CanExit() || !file.exists())
+    {
+        return;
+    }
+    mSavePath = path;
+    file.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ReadFile(&file);
+    setText(ReadFile.readAll());
+    SetSaved();
+    qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
+
 }
 
 void Editor::PromptForSavePath()
@@ -129,14 +149,7 @@ void Editor::SetSaved()
     MainWindow* mainWindow = qobject_cast<MainWindow*>(parent()->parent());
     mainWindow->SetTitle(mSavePath);
     mExtension = QFileInfo(mSavePath).suffix();
-
-    QString path = QFileInfo(mSavePath).absolutePath();
-    if(mainWindow->getFiletree()->getFiletreePath() != path)
-    {
-        mainWindow->getFiletree()->CreateFileTree(path);
-    }
-
-
+    qDebug() <<QString("Saved to: " + mSavePath);
 }
 
 bool Editor::CanExit()
@@ -214,8 +227,7 @@ Editor::~Editor()
 
 /* TODO:
  * Line numbers
- * File tree fix background color
- * File Tree selection and directory recursion
+ * File tree directory recursion
  * Client/Server
  * Syntax Highlighting
  * Folding

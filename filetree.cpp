@@ -3,6 +3,9 @@
 #include <QDirIterator>
 #include <QDebug>
 #include <string>
+#include "mainwindow.h"
+#include "editor.h"
+
 Filetree::Filetree(QWidget *parent) : QWidget(parent)
 {
     mContainer = new QFrame(this);
@@ -32,29 +35,23 @@ void Filetree::CreateFileTree(QString path)
     QDirIterator it(path, QStringList() << "*", QDir::Files | QDir::NoDot | QDir::NoDotDot, QDirIterator::NoIteratorFlags);
     while (it.hasNext())
     {
-        AddFile(QFileInfo(it.next()).fileName());
+        AddFile(QFileInfo(it.next()).absoluteFilePath());
     }
     QDirIterator dirItr(path, QStringList() << "*", QDir::AllDirs | QDir::NoDot | QDir::NoDotDot, QDirIterator::NoIteratorFlags);
     while (dirItr.hasNext())
     {
-        AddDirectory(QFileInfo(dirItr.next()).fileName());
+        AddDirectory(QFileInfo(dirItr.next()).absoluteFilePath());
     }
     mFiletreePath = path;
 }
 
 void Filetree::ClearChildren()
 {
-    for (auto child : children())
+    for (File* child: findChildren<File*>())
     {
-        if (qobject_cast<FileLeaf*>(child)!=nullptr)
-        {
-            delete child;
-        }
-        else if(qobject_cast<FileBranch*>(child) != nullptr)
-        {
-            delete child;
-        }
+        delete child;
     }
+    mSelectedFiles.clear();
 }
 
 void Filetree::AddFile(QString fileName)
@@ -180,6 +177,12 @@ void Filetree::Select(FileSelectEvent selectedFile)
     if(selectedFile.mFile == nullptr)
         return;
 
+    bool isAlreadySelected = mSelectedFiles.find(selectedFile.mFile)!=mSelectedFiles.end();
+    if (isAlreadySelected && !(selectedFile.mIsShiftDown || selectedFile.mIsControlDown))
+    {
+        qobject_cast<MainWindow*>(topLevelWidget())->getEditor()->Open(selectedFile.mFile->getFilePath());
+        return;
+    }
 
     if(!selectedFile.mIsShiftDown)
     {

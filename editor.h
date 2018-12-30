@@ -34,6 +34,7 @@ public slots:
     void Save();
     void SaveAs();
     void Open();
+    void Open(QString path);
     void SetUnsaved();
     void SetSaved();
     void CopyPath();

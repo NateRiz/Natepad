@@ -1,8 +1,13 @@
 #include "file.h"
 #include "filetree.h"
-File::File(QWidget *parent): QWidget(parent)
+File::File(QWidget *parent, QString filePath): QWidget(parent), mFilePath(filePath)
 {
     connect(this, SIGNAL(clicked(QMouseEvent*)), this, SLOT(SelectSelf(QMouseEvent*)));
+}
+
+QString File::getFilePath()
+{
+    return mFilePath;
 }
 
 void File::SelectSelf(QMouseEvent* event)
@@ -17,11 +22,11 @@ void File::mousePressEvent(QMouseEvent *event)
 }
 
 FileLeaf::FileLeaf(QWidget *parent, QString fileName):
-    File(parent)
+    File(parent, fileName)
 {
     mFileName = new QLabel(this);
     mIcon = new QLabel(this);
-    mFileName->setText(fileName);
+    mFileName->setText(QFileInfo(fileName).fileName());
     mFileName->setStyleSheet("padding: 4px");//N.E.S.W.
     mFileName->setAlignment(Qt::AlignLeft);
 
@@ -42,11 +47,11 @@ FileLeaf::FileLeaf(QWidget *parent, QString fileName):
 }
 
 FileBranch::FileBranch(QWidget *parent, QString fileName):
-    File(parent)
+    File(parent, fileName)
 {
     mFileName = new QLabel(this);
     mIcon = new QLabel(this);
-    mFileName->setText(fileName);
+    mFileName->setText(QFileInfo(fileName).fileName());
     mFileName->setStyleSheet("padding: 4px");//N.E.S.W.
     mFileName->setAlignment(Qt::AlignLeft);
 
