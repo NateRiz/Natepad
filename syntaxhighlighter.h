@@ -17,6 +17,7 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 public:
     explicit SyntaxHighlighter(QTextDocument* parent = nullptr, ColorTheme* colorTheme = nullptr);
     virtual ~SyntaxHighlighter();
+    void refresh();
 
 protected:
     void highlightBlock(const QString &text) override;

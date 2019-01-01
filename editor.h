@@ -17,6 +17,7 @@ private:
     void PromptForOpenPath();
     void CreateShortcuts();
     int SaveBeforeQuitPrompt();
+    void RefreshSyntaxHighlighter();
 
     std::unordered_map<std::string,QShortcut*> mShortcuts;
     QString mSavePath = "";
@@ -30,6 +31,7 @@ public:
     virtual ~Editor();
     bool CanExit();
     bool filterEvent(QEvent*);
+    QString getSavePath();
 
 signals:
 

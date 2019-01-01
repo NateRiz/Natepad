@@ -19,11 +19,13 @@
 Editor::Editor(QWidget* parent):
     QTextEdit(parent)
 {
-    mColorTheme = new ColorTheme(this, QString("py"));
+    mColorTheme = new ColorTheme(this);
     mSyntaxHighlighter = new SyntaxHighlighter(this->document(), mColorTheme);
-    setTextColor(QColor(mColorTheme->getDefaultColor()));
+    setTextColor(QColor(QString("White")));
+    if(mColorTheme->getDefaultColor()!=QString(""))
+        setTextColor(QColor(mColorTheme->getDefaultColor()));
     CreateShortcuts();
-    connect(this, SIGNAL(textChanged()), this, SLOT(SetUnsaved()));
+    connect(document(), SIGNAL(modificationChanged(bool)), this, SLOT(SetUnsaved()));
     const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     setFont(fixedFont);
     setTabStopDistance(QFontMetricsF(font()).width(' ')*4);
@@ -47,8 +49,11 @@ void Editor::Save()
     if(mSavePath == "")
     {
         PromptForSavePath();
-        if(mSavePath == "")
+        if(mSavePath == ""){
             return;
+        }
+        RefreshSyntaxHighlighter();
+
     }
     std::ofstream file;
     file.open(mSavePath.toUtf8());
@@ -80,6 +85,8 @@ void Editor::SaveAs()
     file << toPlainText().toUtf8().toStdString();
     file.close();
     SetSaved();
+
+    RefreshSyntaxHighlighter();
 }
 
 void Editor::Open()
@@ -100,6 +107,7 @@ void Editor::Open()
     setText(ReadFile.readAll());
     SetSaved();
     qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
+    RefreshSyntaxHighlighter();
 
 }
 
@@ -138,9 +146,13 @@ void Editor::PromptForOpenPath()
 
 void Editor::SetUnsaved()
 {
+
+    if(mIsSaved){
+        qDebug() << QString("Unsaved*");
+    }
+
     mIsSaved = false;
     qobject_cast<MainWindow*>(parent()->parent())->SetTitle(mSavePath+"*");
-    qDebug() << QString("Unsaved*");
 }
 
 void Editor::SetSaved()
@@ -180,6 +192,13 @@ int Editor::SaveBeforeQuitPrompt()
     return result;
 }
 
+void Editor::RefreshSyntaxHighlighter()
+{
+    blockSignals(true);
+    mSyntaxHighlighter->refresh();
+    blockSignals(false);
+}
+
 void Editor::NewPage()
 {
     if (CanExit())
@@ -202,6 +221,11 @@ bool Editor::filterEvent(QEvent* event)
         return false;
     }
     return false;
+}
+
+QString Editor::getSavePath()
+{
+    return mSavePath;
 }
 
 void Editor::CopyPath()

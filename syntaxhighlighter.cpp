@@ -4,8 +4,6 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, ColorTheme* colorThe
     QSyntaxHighlighter(parent),
     mColorTheme(colorTheme)
 {
-
-
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
@@ -20,10 +18,15 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
             setFormat(match.capturedStart(), match.capturedLength(), format);
         }
     }
-
 }
 
 SyntaxHighlighter::~SyntaxHighlighter()
 {
+}
+
+void SyntaxHighlighter::refresh()
+{
+    mColorTheme->RefreshColorMap();
+    rehighlight();
 }
 

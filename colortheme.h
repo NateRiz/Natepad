@@ -34,11 +34,12 @@ private:
 
 
 public:
-    explicit ColorTheme(QWidget* parent, QString extension);
+    explicit ColorTheme(QWidget* parent);
     virtual ~ColorTheme();
 
     QHash<QRegularExpression, QTextCharFormat> getColorMap();
     QString getDefaultColor();
+    void RefreshColorMap();
 };
 
 #endif // COLORTHEME_H
