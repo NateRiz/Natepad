@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QMouseEvent>
 #include <unordered_set>
+#include <QScrollArea>
 
 struct FileSelectEvent{
     FileSelectEvent()=default;
@@ -38,8 +39,6 @@ public:
     QString getFiletreePath();
 
 
-signals:
-
 private:
     void AddFile(QString fileName);
     void AddDirectory(QString dirName);
@@ -53,6 +52,7 @@ private:
     QString mFiletreePath;
     std::unordered_set<File*> mSelectedFiles;
     File* mLastSelectedFile;
+    QScrollArea* mScroll;
 };
 
 

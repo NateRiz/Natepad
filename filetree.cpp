@@ -5,6 +5,7 @@
 #include <string>
 #include "mainwindow.h"
 #include "editor.h"
+#include <QScrollBar>
 
 Filetree::Filetree(QWidget *parent) : QWidget(parent)
 {
@@ -22,6 +23,16 @@ Filetree::Filetree(QWidget *parent) : QWidget(parent)
     mRootLayout->setSpacing(0);
     setLayout(mRootLayout);
     mRootLayout->addWidget(mContainer);
+
+    mScroll = new QScrollArea;
+    mScroll->setWidget(mContainer);
+    mScroll->setWidgetResizable(true);
+    mRootLayout->addWidget(mScroll);
+
+    mScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    mScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mScroll->verticalScrollBar()->setEnabled(true);
+    mScroll->horizontalScrollBar()->setEnabled(false);
 
     mFiletreePath = "";
     mSelectedFiles = std::unordered_set<File*>();

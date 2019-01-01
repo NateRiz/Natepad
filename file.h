@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+class Filetree;
 
 class File: public QWidget
 {
@@ -29,6 +30,7 @@ protected:
 
 private:
     QString mFilePath;
+    Filetree* mFiletree;
 
 
 };

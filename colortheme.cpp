@@ -4,7 +4,6 @@
 ColorTheme::ColorTheme(QWidget *parent):
     QWidget(parent)
 {
-    RefreshColorMap();
 }
 
 void ColorTheme::SetState(QString line)
@@ -41,7 +40,10 @@ void ColorTheme::ParseKeywords(QStringList line)
     }
 }
 
-ColorTheme::~ColorTheme(){}
+ColorTheme::~ColorTheme()
+{
+
+}
 
 QHash<QRegularExpression, QTextCharFormat> ColorTheme::getColorMap()
 {
@@ -61,6 +63,7 @@ void ColorTheme::RefreshColorMap()
     QString savePath = qobject_cast<Editor*>(parent())->getSavePath();
     QString extension = QFileInfo(savePath).suffix();
     QString path = QString(":/Themes/") + extension + QString(".cfg");
+
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly))
     {

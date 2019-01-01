@@ -1,6 +1,9 @@
 #include "file.h"
 #include "filetree.h"
-File::File(QWidget *parent, QString filePath): QWidget(parent), mFilePath(filePath)
+File::File(QWidget *parent, QString filePath):
+    QWidget(parent),
+    mFilePath(filePath),
+    mFiletree(qobject_cast<Filetree*>(parent))
 {
     connect(this, SIGNAL(clicked(QMouseEvent*)), this, SLOT(SelectSelf(QMouseEvent*)));
 }
@@ -19,9 +22,7 @@ QString File::getFilePath()
 
 void File::SelectSelf(QMouseEvent* event)
 {
-
-    Filetree* filetree = qobject_cast<Filetree*>(parent()->parent());
-    filetree->Select(filetree->GetFileUnderMouse(event));
+    mFiletree->Select(mFiletree->GetFileUnderMouse(event));
 }
 
 void File::mousePressEvent(QMouseEvent *event)
