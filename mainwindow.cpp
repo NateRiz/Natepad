@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "editor.h"
 #include "filetree.h"
+#include "server.h"
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QAction>
@@ -130,7 +131,7 @@ void MainWindow::CreateClientPrompt()
 
 void MainWindow::CreateServerPrompt()
 {
-
+    mServer = new Server();
 }
 
 MainWindow::~MainWindow()

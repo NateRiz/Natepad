@@ -8,6 +8,7 @@ class QWidgetItem;
 class Editor;
 class Filetree;
 class QHBoxLayout;
+class Server;
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,8 @@ private:
     Editor* mEditor;
     QHBoxLayout* mLayout;
     Filetree* mFiletree;
+    Server* mServer;
+
 
 
     void SetUpMenu();

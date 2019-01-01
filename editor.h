@@ -5,6 +5,8 @@
 #include <string>
 #include "filetree.h"
 #include "colortheme.h"
+#include "syntaxhighlighter.h"
+
 class QShortcut;
 
 class Editor : public QTextEdit
@@ -21,6 +23,7 @@ private:
     QString mExtension;
     bool mIsSaved;
     ColorTheme* mColorTheme;
+    SyntaxHighlighter* mSyntaxHighlighter;
 
 public:
     explicit Editor(QWidget *parent = nullptr);

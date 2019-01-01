@@ -32,7 +32,9 @@ SOURCES += \
     editor.cpp \
     filetree.cpp \
     server.cpp \
-    file.cpp
+    file.cpp \
+    syntaxhighlighter.cpp \
+    colortheme.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +42,8 @@ HEADERS += \
     filetree.h \
     colortheme.h \
     server.h \
-    file.h
+    file.h \
+    syntaxhighlighter.h
 
 FORMS += \
         mainwindow.ui

@@ -1,53 +1,44 @@
 #ifndef COLORTHEME_H
 #define COLORTHEME_H
 #include <fstream>
-#include<iostream>
+#include <iostream>
 #include <QWidget>
 #include <QFile>
 #include <QtDebug>
 #include <QTextStream>
-#include <unordered_map>
+#include <QHash>
+#include <QTextCharFormat>
+#include <QRegularExpression>
 class ColorTheme : public QWidget
 {
 private:
     Q_OBJECT
-    std::unordered_map<std::string, std::string> mColorMap;
+    QHash<QRegularExpression, QTextCharFormat> mColorMap;
+    enum eRegexState
+    {
+        INVALID=0,
+        KEYWORDS,
+        CONSTANTS,
+        LITERALS,
+        BASECLASSMETHODS,
+        CLASS,
+        ARGS,
+        COMMENTS,
+        DEFAULT
+    };
+    eRegexState mRegexState;
+    QString mDefaultColor;
+
+    void SetState(QString);
+    void ParseKeywords(QStringList);
+
 
 public:
-    explicit ColorTheme(QWidget* parent, QString extension):
-        QWidget(parent)
-    {
-        QString path = ":/Themes/" + extension + QString(".cfg");
-        QFile file(path);
-        if (!file.open(QIODevice::ReadOnly))
-        {
-            qDebug("No theme found for: ." + extension.toLatin1());
-            return;
-        }
+    explicit ColorTheme(QWidget* parent, QString extension);
+    virtual ~ColorTheme();
 
-        QTextStream in(&file);
-        while (!in.atEnd())
-        {
-            QStringList line = in.readLine().replace(" ","").split(":");
-
-            if(line.size()!=2)
-            {
-                qDebug("Could not parse line from theme file:\n" + line.join("").toLatin1());
-            }
-            else
-            {
-                mColorMap[line[0].toStdString()]=line[1].toStdString();
-            }
-        }
-
-    }
-
-    std::string ParseWord(QString word)
-    {
-        return mColorMap["Text"];
-    }
-
-    virtual ~ColorTheme(){}
+    QHash<QRegularExpression, QTextCharFormat> getColorMap();
+    QString getDefaultColor();
 };
 
 #endif // COLORTHEME_H

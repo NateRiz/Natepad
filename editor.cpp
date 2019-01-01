@@ -20,13 +20,14 @@ Editor::Editor(QWidget* parent):
     QTextEdit(parent)
 {
     mColorTheme = new ColorTheme(this, QString("py"));
-    setStyleSheet("Color: White"); //Text color
+    mSyntaxHighlighter = new SyntaxHighlighter(this->document(), mColorTheme);
+    setTextColor(QColor(mColorTheme->getDefaultColor()));
     CreateShortcuts();
     connect(this, SIGNAL(textChanged()), this, SLOT(SetUnsaved()));
-    SetSaved();
     const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     setFont(fixedFont);
     setTabStopDistance(QFontMetricsF(font()).width(' ')*4);
+    SetSaved();
 }
 
 void Editor::CreateShortcuts()
@@ -98,7 +99,6 @@ void Editor::Open()
     QTextStream ReadFile(&file);
     setText(ReadFile.readAll());
     SetSaved();
-
     qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
 
 }
@@ -140,7 +140,7 @@ void Editor::SetUnsaved()
 {
     mIsSaved = false;
     qobject_cast<MainWindow*>(parent()->parent())->SetTitle(mSavePath+"*");
-
+    qDebug() << QString("Unsaved*");
 }
 
 void Editor::SetSaved()
@@ -192,18 +192,6 @@ void Editor::NewPage()
 bool Editor::filterEvent(QEvent* event)
 {
     if (event->type() == QEvent::KeyPress) {
-
-        /* //Very Broken
-        QTextCursor tc = textCursor();
-        tc.select(QTextCursor::WordUnderCursor);
-        QString copy = tc.selectedText();
-        std::string hexColor = mColorTheme->ParseWord(tc.selectedText());
-        qDebug() << tc.selectedText();
-        qDebug() << QString::fromStdString(hexColor);
-        tc.removeSelectedText();
-        setTextColor(QColor(QString::fromStdString(hexColor)));
-        tc.insertText(copy);
-        */
         QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
         if(keyEvent->key() == Qt::Key_Tab)
@@ -223,6 +211,11 @@ void Editor::CopyPath()
 
 Editor::~Editor()
 {
+    delete mSyntaxHighlighter;
+    delete mColorTheme;
+    for(auto itr = mShortcuts.begin(); itr!=mShortcuts.end(); ++itr){
+        delete (*itr).second;
+    }
 }
 
 /* TODO:
@@ -231,4 +224,5 @@ Editor::~Editor()
  * Client/Server
  * Syntax Highlighting
  * Folding
+ * right click menu
  */

@@ -5,6 +5,13 @@ File::File(QWidget *parent, QString filePath): QWidget(parent), mFilePath(filePa
     connect(this, SIGNAL(clicked(QMouseEvent*)), this, SLOT(SelectSelf(QMouseEvent*)));
 }
 
+File::~File()
+{
+    delete mFileName;
+    delete mIcon;
+    delete mLayout;
+}
+
 QString File::getFilePath()
 {
     return mFilePath;
@@ -12,6 +19,7 @@ QString File::getFilePath()
 
 void File::SelectSelf(QMouseEvent* event)
 {
+
     Filetree* filetree = qobject_cast<Filetree*>(parent()->parent());
     filetree->Select(filetree->GetFileUnderMouse(event));
 }
