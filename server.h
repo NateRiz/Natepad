@@ -6,6 +6,10 @@ class Server
 {
 public:
     Server();
+
+private:
+    void start_accept();
+
 };
 
 #endif // SERVER_H
