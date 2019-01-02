@@ -28,10 +28,10 @@ private:
     };
     eRegexState mRegexState;
     QString mDefaultColor;
+    QString mPath;
 
     void SetState(QString);
     void ParseKeywords(QStringList);
-
 
 public:
     explicit ColorTheme(QWidget* parent);
@@ -40,6 +40,8 @@ public:
     QHash<QRegularExpression, QTextCharFormat> getColorMap();
     QString getDefaultColor();
     void RefreshColorMap();
+    void SetPath(QString path);
+    QHash<QString, QString> GetAvailableThemes();
 };
 
 #endif // COLORTHEME_H

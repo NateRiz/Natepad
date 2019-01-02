@@ -9,6 +9,7 @@ class Editor;
 class Filetree;
 class QHBoxLayout;
 class Server;
+class Settings;
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ public:
     void SetTitle(QString);
     Filetree* getFiletree();
     Editor* getEditor();
+    Settings* getSettings();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -36,15 +38,14 @@ private:
     QHBoxLayout* mLayout;
     Filetree* mFiletree;
     Server* mServer;
-
-
+    Settings* mSettings;
 
     void SetUpMenu();
 
 private slots:
     void CreateClientPrompt();
     void CreateServerPrompt();
-
+    void ChooseThemePrompt();
 };
 
 #endif // MAINWINDOW_H

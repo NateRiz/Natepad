@@ -34,7 +34,8 @@ SOURCES += \
     server.cpp \
     file.cpp \
     syntaxhighlighter.cpp \
-    colortheme.cpp
+    colortheme.cpp \
+    settings.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     colortheme.h \
     server.h \
     file.h \
-    syntaxhighlighter.h
+    syntaxhighlighter.h \
+    settings.h
 
 FORMS += \
         mainwindow.ui

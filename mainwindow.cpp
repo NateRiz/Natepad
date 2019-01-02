@@ -3,6 +3,7 @@
 #include "editor.h"
 #include "filetree.h"
 #include "server.h"
+#include "settings.h"
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QAction>
@@ -10,6 +11,11 @@
 #include <QFontDatabase>
 #include <QSizePolicy>
 #include <QInputDialog>
+#include <QDialog>
+#include <QListWidget>
+#include <QPushButton>
+#include <QDirIterator>
+#include <QResource>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     delete ui->mainToolBar;
+
+    mSettings = new Settings(this);
+
     setStyleSheet("background-color:rgb(60,63,65); color:White;");
     setGeometry(0, 0, 800, 600);
 
@@ -85,7 +94,13 @@ void MainWindow::SetUpMenu()
     QAction* aHost = online->addAction(QString("Host"));
     connect(aHost, SIGNAL(triggered()), this, SLOT(CreateServerPrompt()));
     online->setFont(fixedFont);
+
+    QMenu* preferences = menuBar()->addMenu(tr("&Preferences"));
+    QAction* aThemes = preferences->addAction(QString("Themes"));
+    connect(aThemes, SIGNAL(triggered()), this, SLOT(ChooseThemePrompt()));
+
 }
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(mEditor->CanExit())
@@ -102,7 +117,6 @@ void MainWindow::SetTitle(QString title)
 {
     setWindowTitle(title);
 }
-
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
@@ -124,6 +138,11 @@ Editor *MainWindow::getEditor()
     return mEditor;
 }
 
+Settings *MainWindow::getSettings()
+{
+    return mSettings;
+}
+
 void MainWindow::CreateClientPrompt()
 {
     QInputDialog::getText(this, "Join", "IP");
@@ -132,6 +151,47 @@ void MainWindow::CreateClientPrompt()
 void MainWindow::CreateServerPrompt()
 {
     mServer = new Server();
+}
+
+void MainWindow::ChooseThemePrompt()
+{
+    QDialog* themePrompt = new QDialog(this);
+    QHash<QString, QString> availableThemes = mEditor->getColorTheme()->GetAvailableThemes();
+
+    QVBoxLayout* themeLayout = new QVBoxLayout(themePrompt);
+    themePrompt->setLayout(themeLayout);
+
+    QListWidget* themeList = new QListWidget(themePrompt);
+    themeLayout->addWidget(themeList);
+
+    for(QString themeName : availableThemes.keys())
+    {
+        new QListWidgetItem(themeName, themeList);
+    }
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    themeLayout->addLayout(buttonLayout);
+    QPushButton* bApply = new QPushButton("Apply");
+    connect(bApply, &QPushButton::released,
+            [&](){
+        if(themeList->count()!=0)
+        {
+            this->mEditor->getColorTheme()->SetPath(availableThemes[themeList->currentItem()->text()]);
+            this->mEditor->RefreshSyntaxHighlighter();
+            QString themeFileName = QFileInfo(availableThemes[themeList->currentItem()->text()]).fileName();
+            mSettings->WriteTheme(mEditor->GetExtension(), themeFileName);
+        }
+        themePrompt->done(0);
+
+    });
+
+
+    buttonLayout->addWidget(bApply);
+    QPushButton* bCancel = new QPushButton("Cancel");
+    connect(bCancel, &QPushButton::released, [&](){themePrompt->done(0);});
+    buttonLayout->addWidget(bCancel);
+
+    themePrompt->exec();
 }
 
 MainWindow::~MainWindow()

@@ -15,6 +15,7 @@
 #include <QFileInfo>
 #include <QTextCursor>
 #include <QDebug>
+#include <settings.h>
 
 Editor::Editor(QWidget* parent):
     QTextEdit(parent)
@@ -106,9 +107,12 @@ void Editor::Open()
     QTextStream ReadFile(&file);
     setText(ReadFile.readAll());
     SetSaved();
-    qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
-    RefreshSyntaxHighlighter();
+    MainWindow* mw = qobject_cast<MainWindow*>(topLevelWidget());
+    mw->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
 
+    QString themePath = mw->getSettings()->GetThemeDirectory()+"/"+mw->getSettings()->GetTheme(mExtension);
+    mColorTheme->SetPath(themePath);
+    RefreshSyntaxHighlighter();
 }
 
 void Editor::Open(QString path)
@@ -124,8 +128,12 @@ void Editor::Open(QString path)
     QTextStream ReadFile(&file);
     setText(ReadFile.readAll());
     SetSaved();
-    qobject_cast<MainWindow*>(topLevelWidget())->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
+    MainWindow* mw = qobject_cast<MainWindow*>(topLevelWidget());
+    mw->getFiletree()->CreateFileTree(QFileInfo(mSavePath).absolutePath());
 
+    QString themePath = mw->getSettings()->GetThemeDirectory()+"/"+mw->getSettings()->GetTheme(mExtension);
+    mColorTheme->SetPath(themePath);
+    RefreshSyntaxHighlighter();
 }
 
 void Editor::PromptForSavePath()
@@ -133,7 +141,6 @@ void Editor::PromptForSavePath()
     const QString HOME_DIR = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).join("");
     QString fileName = QFileDialog::getSaveFileName(this, "Save File", HOME_DIR);
     mSavePath = fileName;
-
 }
 
 void Editor::PromptForOpenPath()
@@ -226,6 +233,16 @@ bool Editor::filterEvent(QEvent* event)
 QString Editor::getSavePath()
 {
     return mSavePath;
+}
+
+ColorTheme* Editor::getColorTheme()
+{
+    return mColorTheme;
+}
+
+QString Editor::GetExtension()
+{
+    return mExtension;
 }
 
 void Editor::CopyPath()

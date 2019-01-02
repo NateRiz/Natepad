@@ -1,5 +1,7 @@
 #include "colortheme.h"
 #include "editor.h"
+#include <QDirIterator>
+#include <QCoreApplication>
 
 ColorTheme::ColorTheme(QWidget *parent):
     QWidget(parent)
@@ -55,19 +57,67 @@ QString ColorTheme::getDefaultColor()
     return mDefaultColor;
 }
 
-void ColorTheme::RefreshColorMap()
+void ColorTheme::SetPath(QString path)
 {
-    mColorMap= QHash<QRegularExpression, QTextCharFormat>();
-    mRegexState = INVALID;
+    mPath = path;
+    RefreshColorMap();
+}
 
+
+QHash<QString, QString> ColorTheme::GetAvailableThemes()
+{
+
+    QHash<QString, QString> availableThemes;
     QString savePath = qobject_cast<Editor*>(parent())->getSavePath();
     QString extension = QFileInfo(savePath).suffix();
-    QString path = QString(":/Themes/") + extension + QString(".cfg");
+    QDir themeDir(QCoreApplication::applicationDirPath());
+    themeDir.cd("../Natepad/Themes");
+    QDirIterator it(themeDir.path(), QStringList() << "*", QDir::Files | QDir::NoDot | QDir::NoDotDot, QDirIterator::NoIteratorFlags);
+        while (it.hasNext())
+    {
 
-    QFile file(path);
+        QString currentPath = it.next();
+        QFile file(currentPath);
+        file.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ReadFile(&file);
+
+        bool isCorrectExtension = false;
+
+        while(!ReadFile.atEnd())
+        {
+            QString line = ReadFile.readLine();
+            if(line[0]==QString(".")){
+                if(line.toLower() == QString(".")+extension){
+                    isCorrectExtension = true;
+                }
+                else{
+                    break;
+                }
+            }
+
+            else if(isCorrectExtension && line[0]=="["){
+                line = line.replace("[","");
+                line = line.replace("]","");
+                availableThemes[line]=currentPath;
+                break;
+            }
+        }
+
+        file.close();
+    }
+
+    return availableThemes;
+}
+
+void ColorTheme::RefreshColorMap()
+{
+    mColorMap = QHash<QRegularExpression, QTextCharFormat>();
+    mRegexState = INVALID;
+
+    QFile file(mPath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        qDebug() << QString("No theme found for: ." + extension);
+        qDebug() << QString("Could not read theme from: ") + mPath;
         return;
     }
 

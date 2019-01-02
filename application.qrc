@@ -3,7 +3,5 @@
         <file>Assets/fileSaved.png</file>
         <file>Assets/fileEditing.png</file>
         <file>Assets/directory.png</file>
-	<file>Themes/py.cfg</file>
-	<file>Themes/cpp.cfg</file>
     </qresource>
 </RCC>
