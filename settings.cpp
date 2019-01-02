@@ -62,6 +62,7 @@ void Settings::WriteTheme(QString extension, QString themeName)
     mSettings.open(QFile::ReadWrite | QFile::Text);
     QTextStream in(&mSettings);
     QStringList settings = in.readAll().split("\n");
+    settings.removeAll(QString(""));
 
     bool inThemes = false;
     for(int s = 0; s < settings.size(); ++s)

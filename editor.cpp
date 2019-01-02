@@ -263,7 +263,6 @@ Editor::~Editor()
  * Line numbers
  * File tree directory recursion
  * Client/Server
- * Syntax Highlighting
  * Folding
  * right click menu
  */
