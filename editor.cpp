@@ -262,7 +262,8 @@ Editor::~Editor()
 /* TODO:
  * Line numbers
  * File tree directory recursion
- * Client/Server
+ * Client / Server
  * Folding
  * right click menu
+ * Find / Replace
  */

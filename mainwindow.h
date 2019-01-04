@@ -10,6 +10,7 @@ class Filetree;
 class QHBoxLayout;
 class Server;
 class Settings;
+class VersionControl;
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,7 @@ private:
     Filetree* mFiletree;
     Server* mServer;
     Settings* mSettings;
+    VersionControl* mVersionControl;
 
     void SetUpMenu();
 

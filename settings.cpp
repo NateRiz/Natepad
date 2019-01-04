@@ -70,7 +70,7 @@ void Settings::WriteTheme(QString extension, QString themeName)
         if(settings[s][0]=="["){
             inThemes =  false;
         }
-        //Falthrough if it is a theme - otherwise stay false
+        //Fall through if it is a theme - otherwise stay false
         if(settings[s].toLower() == "[themes]")
         {
             inThemes = true;

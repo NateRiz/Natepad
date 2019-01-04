@@ -4,6 +4,7 @@
 #include "filetree.h"
 #include "server.h"
 #include "settings.h"
+#include "versioncontrol.h"
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QAction>
@@ -25,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     delete ui->mainToolBar;
 
     mSettings = new Settings(this);
+    mServer = new Server();
+    mVersionControl = new VersionControl(this);
 
     setStyleSheet("background-color:rgb(60,63,65); color:White;");
     setGeometry(0, 0, 800, 600);
@@ -98,6 +101,10 @@ void MainWindow::SetUpMenu()
     QMenu* preferences = menuBar()->addMenu(tr("&Preferences"));
     QAction* aThemes = preferences->addAction(QString("Themes"));
     connect(aThemes, SIGNAL(triggered()), this, SLOT(ChooseThemePrompt()));
+
+    QMenu* versionControl = menuBar()->addMenu(tr("&Version Control"));
+    QAction* aAdd = versionControl->addAction(QString("Add"));
+    connect(aAdd, SIGNAL(triggered()), mVersionControl, SLOT(GitStatus()));
 
 }
 
